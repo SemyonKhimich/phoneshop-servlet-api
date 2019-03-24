@@ -1,25 +1,20 @@
 package com.es.phoneshop.web;
 
 import com.es.phoneshop.model.product.ArrayListProductDao;
-import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.model.product.ProductDao;
+import com.es.phoneshop.model.product.ProductNotFoundException;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Currency;
-import java.util.List;
 
-public class ProductListPageServlet extends HttpServlet {
+public class ProductDetailsPageServlet extends HttpServlet {
     private ProductDao productDao;
-    protected static final String QUERY = "query", ORDER = "order", FIELD = "field";
+    protected static final String URLPATTERN = "/products/";
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -28,16 +23,13 @@ public class ProductListPageServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String queryParam = request.getParameter(QUERY);
-        String orderParam = request.getParameter(ORDER);
-        String fieldParam = request.getParameter(FIELD);
-        request.setAttribute("products", productDao.findProducts(queryParam, orderParam, fieldParam));
-        request.getRequestDispatcher("/WEB-INF/pages/productList.jsp").forward(request, response);
+        String requestURL = request.getRequestURL().toString();
+        Long id = Long.parseLong(requestURL.substring(requestURL.lastIndexOf(URLPATTERN) + URLPATTERN.length()));
+        request.setAttribute("product", productDao.getProduct(id));
+        request.getRequestDispatcher("/WEB-INF/pages/product.jsp").forward(request, response);
     }
 
     public void setProductDao(ProductDao productDao) {
         this.productDao = productDao;
     }
-
-
 }

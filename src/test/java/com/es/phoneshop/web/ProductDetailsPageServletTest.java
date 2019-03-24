@@ -4,7 +4,6 @@ import com.es.phoneshop.model.product.ArrayListProductDao;
 import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.model.product.ProductDao;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -16,12 +15,12 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
+
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ProductListPageServletTest {
+public class ProductDetailsPageServletTest {
     @Mock
     private HttpServletRequest request;
     @Mock
@@ -31,26 +30,21 @@ public class ProductListPageServletTest {
     @Mock
     private ProductDao productDao;
     @Mock
-    private List<Product> products;
+    private ServletConfig servletConfig;
 
-    private ProductListPageServlet servlet = new ProductListPageServlet();
+    private StringBuffer buffer = new StringBuffer("http://localhost:8080/phoneshop-servlet-api/products/1");
 
-    private String query = "query", order = "order", field = "field";
+    @Mock
+    private Product product;
+
+    private ProductDetailsPageServlet servlet = new ProductDetailsPageServlet();
 
     @Before
     public void setup() {
         when(request.getRequestDispatcher(anyString())).thenReturn(requestDispatcher);
         servlet.setProductDao(productDao);
-        when(productDao.findProducts(query, order, field)).thenReturn(products);
-        when(request.getParameter(ProductListPageServlet.FIELD)).thenReturn(field);
-        when(request.getParameter(ProductListPageServlet.ORDER)).thenReturn(order);
-        when(request.getParameter(ProductListPageServlet.QUERY)).thenReturn(query);
-    }
-
-    @Test
-    public void testFindProducts() throws ServletException, IOException {
-        servlet.doGet(request, response);
-        verify(productDao).findProducts(query, order, field);
+        when(request.getRequestURL()).thenReturn(buffer);
+        when(productDao.getProduct(anyLong())).thenReturn(product);
     }
 
     @Test
@@ -60,8 +54,8 @@ public class ProductListPageServletTest {
     }
 
     @Test
-    public void testDoGetSetAttribute() throws ServletException, IOException {
+    public void testSetAttribute() throws ServletException, IOException {
         servlet.doGet(request, response);
-        verify(request).setAttribute("products", products);
+        verify(request).setAttribute("product", product);
     }
 }
