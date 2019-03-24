@@ -1,7 +1,6 @@
 package com.es.phoneshop.model.product;
 
 import java.util.*;
-import java.util.logging.LogManager;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -11,6 +10,10 @@ public class ArrayListProductDao implements ProductDao {
 
     public static ProductDao getInstance() {
         return instance;
+    }
+
+    public static void setInstance(ProductDao productDao) {
+        instance = productDao;
     }
 
     private ArrayListProductDao() {
@@ -39,30 +42,48 @@ public class ArrayListProductDao implements ProductDao {
         return comparator;
     }
 
+    private Stream<Map.Entry<Product, Long>> getStreamOfMatchedProduct(String query) {
+        Map<Product, Long> productLongMap = new HashMap<>();
+        String words[] = query.split(" ");
+        getValidProductStream()
+                .forEach(product -> productLongMap.put(product, words.length - Arrays.stream(words)
+                        .filter(word -> product.getDescription().toLowerCase().contains(word)).count()));
+        return productLongMap.entrySet()
+                .stream().filter(productLongEntry -> productLongEntry.getValue() < words.length);
+    }
+
+    private Stream<Product> getValidProductStream() {
+        return products.stream()
+                .filter(product -> product.getPrice() != null && product.getStock() > 0);
+    }
+
+    private List<Product> getSortedProducts(String order, String field) {
+        return getValidProductStream().sorted(getComparator(order, field)).collect(Collectors.toList());
+    }
+
+    private List<Product> getSearchResult(String query) {
+        return getStreamOfMatchedProduct(query)
+                .sorted(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey).collect(Collectors.toList());
+    }
+
+    private List<Product> getSortedSearchResult(String query, String order, String field) {
+        String words[] = query.split(" ");
+        return getValidProductStream()
+                .filter(product -> Arrays.stream(words)
+                        .anyMatch(word -> product.getDescription().toLowerCase().contains(word)))
+                .sorted(getComparator(order, field)).collect(Collectors.toList());
+    }
+
     @Override
     public List<Product> findProducts(String query, String order, String field) {
-        Stream<Product> productStream = products.stream()
-                .filter(product -> product.getPrice() != null && product.getStock() > 0);
-        if (query != null) {
-            String words[] = query.toLowerCase().split(" ");
-            if (order == null && field == null) {
-                Map<Product, Long> productLongMap = new HashMap<>();
-                productStream
-                        .forEach(product -> productLongMap.put(product, words.length - Arrays.stream(words)
-                                .filter(word -> product.getDescription().toLowerCase().contains(word)).count()));
-                return productLongMap.entrySet()
-                        .stream().filter(productLongEntry -> productLongEntry.getValue() < words.length)
-                        .sorted(Map.Entry.comparingByValue())
-                        .map(Map.Entry::getKey).collect(Collectors.toList());
-            } else {
-                return productStream
-                        .filter(product -> Arrays.stream(words)
-                                .filter(word -> product.getDescription().toLowerCase().contains(word)).count() > 0)
-                        .sorted(getComparator(order, field)).collect(Collectors.toList());
-            }
-        } else {
-            return productStream.sorted(getComparator(order, field)).collect(Collectors.toList());
+        if (query == null) {
+            return getSortedProducts(order, field);
         }
+        if (order == null && field == null) {
+            return getSearchResult(query);
+        }
+        return getSortedSearchResult(query, order, field);
 
     }
 

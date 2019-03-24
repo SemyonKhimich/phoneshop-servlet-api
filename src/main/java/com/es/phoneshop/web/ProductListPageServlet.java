@@ -1,25 +1,20 @@
 package com.es.phoneshop.web;
 
 import com.es.phoneshop.model.product.ArrayListProductDao;
-import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.model.product.ProductDao;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Currency;
-import java.util.List;
 
 public class ProductListPageServlet extends HttpServlet {
     private ProductDao productDao;
-    protected static final String QUERY = "query", ORDER = "order", FIELD = "field";
+    protected static final String QUERY = "query";
+    protected static final String ORDER = "order";
+    protected static final String FIELD = "field";
 
     @Override
     public void init(ServletConfig config) throws ServletException {

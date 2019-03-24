@@ -17,12 +17,12 @@
       <tr>
         <td>Image</td>
         <td>Description
-        <a href="?query=${param.query}&order=asc&field=description">asc</a>
-        <a href="?query=${param.query}&order=desc&field=description">desc</a>
+        <tags:sortLinks query="${param.query}" field="description">
+        </tags:sortLinks>
         </td>
         <td class="price">Price
-        <a href="?query=${param.query}&order=asc&field=price">asc</a>
-        <a href="?query=${param.query}&order=desc&field=price">desc</a>
+        <tags:sortLinks query="${param.query}" field="price">
+        </tags:sortLinks>
         </td>
       </tr>
     </thead>

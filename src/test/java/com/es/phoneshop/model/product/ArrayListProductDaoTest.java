@@ -1,9 +1,7 @@
 package com.es.phoneshop.model.product;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
 
 import static org.mockito.Mockito.*;
 

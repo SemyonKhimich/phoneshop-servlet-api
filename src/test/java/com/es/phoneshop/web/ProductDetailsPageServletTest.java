@@ -1,6 +1,5 @@
 package com.es.phoneshop.web;
 
-import com.es.phoneshop.model.product.ArrayListProductDao;
 import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.model.product.ProductDao;
 import org.junit.Before;
@@ -10,7 +9,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,10 +27,9 @@ public class ProductDetailsPageServletTest {
     private RequestDispatcher requestDispatcher;
     @Mock
     private ProductDao productDao;
-    @Mock
-    private ServletConfig servletConfig;
 
-    private StringBuffer buffer = new StringBuffer("http://localhost:8080/phoneshop-servlet-api/products/1");
+    private String requestURI = "/phoneshop-servlet-api/products/10";
+    private String pathInfo = "/10";
 
     @Mock
     private Product product;
@@ -43,7 +40,8 @@ public class ProductDetailsPageServletTest {
     public void setup() {
         when(request.getRequestDispatcher(anyString())).thenReturn(requestDispatcher);
         servlet.setProductDao(productDao);
-        when(request.getRequestURL()).thenReturn(buffer);
+        when(request.getRequestURI()).thenReturn(requestURI);
+        when(request.getPathInfo()).thenReturn(pathInfo);
         when(productDao.getProduct(anyLong())).thenReturn(product);
     }
 
