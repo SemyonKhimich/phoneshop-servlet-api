@@ -6,15 +6,19 @@ import org.junit.Test;
 import static org.mockito.Mockito.*;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
 public class ArrayListProductDaoTest {
-    private ProductDao productDao;
+    private List<Product> products = new ArrayList<>();
+
+    private ArrayListProductDao productDao = ArrayListProductDao.getInstance();
 
     @Before
     public void setup() {
-        productDao = ArrayListProductDao.getInstance();
+        productDao.setProducts(products);
     }
 
 

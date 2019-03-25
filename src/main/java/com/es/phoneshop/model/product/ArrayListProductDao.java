@@ -6,14 +6,14 @@ import java.util.stream.Stream;
 
 public class ArrayListProductDao implements ProductDao {
     private List<Product> products;
-    private static ProductDao instance = new ArrayListProductDao();
+    private static ArrayListProductDao instance = new ArrayListProductDao();
 
-    public static ProductDao getInstance() {
+    public static ArrayListProductDao getInstance() {
         return instance;
     }
 
-    public static void setInstance(ProductDao productDao) {
-        instance = productDao;
+    public void setProducts(List<Product> products) {
+        this.products = products;
     }
 
     private ArrayListProductDao() {
