@@ -28,7 +28,6 @@ public class ProductDetailsPageServletTest {
     @Mock
     private ProductDao productDao;
 
-    private String requestURI = "/phoneshop-servlet-api/products/10";
     private String pathInfo = "/10";
 
     @Mock
@@ -40,9 +39,8 @@ public class ProductDetailsPageServletTest {
     public void setup() {
         when(request.getRequestDispatcher(anyString())).thenReturn(requestDispatcher);
         servlet.setProductDao(productDao);
-        when(request.getRequestURI()).thenReturn(requestURI);
         when(request.getPathInfo()).thenReturn(pathInfo);
-        when(productDao.getProduct(anyLong())).thenReturn(product);
+        when(productDao.getProduct(10L)).thenReturn(product);
     }
 
     @Test

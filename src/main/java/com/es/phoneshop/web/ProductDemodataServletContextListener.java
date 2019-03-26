@@ -13,12 +13,11 @@ import java.util.List;
 
 public class ProductDemodataServletContextListener implements ServletContextListener {
 
-    private ProductDao productDao;
 
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
-        productDao = ArrayListProductDao.getInstance();
-        getSampleProducts().forEach(product -> productDao.save(product));
+        ProductDao productDao = ArrayListProductDao.getInstance();
+        getSampleProducts().forEach(productDao::save);
     }
 
     @Override

@@ -12,6 +12,10 @@ public class ArrayListProductDao implements ProductDao {
         return instance;
     }
 
+    public static void setInstance(ArrayListProductDao instance) {
+        ArrayListProductDao.instance = instance;
+    }
+
     public void setProducts(List<Product> products) {
         this.products = products;
     }
@@ -21,7 +25,7 @@ public class ArrayListProductDao implements ProductDao {
     }
 
     @Override
-    public Product getProduct(Long id) {
+    public synchronized Product getProduct(Long id) {
         return products.stream()
                 .filter(product -> product.getId().equals(id))
                 .findFirst().orElseThrow(() -> new ProductNotFoundException("Product with id " + id + " not found"));
@@ -44,7 +48,7 @@ public class ArrayListProductDao implements ProductDao {
 
     private Stream<Map.Entry<Product, Long>> getStreamOfMatchedProduct(String query) {
         Map<Product, Long> productLongMap = new HashMap<>();
-        String words[] = query.split(" ");
+        String words[] = query.toLowerCase().split(" ");
         getValidProductStream()
                 .forEach(product -> productLongMap.put(product, words.length - Arrays.stream(words)
                         .filter(word -> product.getDescription().toLowerCase().contains(word)).count()));
@@ -68,7 +72,7 @@ public class ArrayListProductDao implements ProductDao {
     }
 
     private List<Product> getSortedSearchResult(String query, String order, String field) {
-        String words[] = query.split(" ");
+        String words[] = query.toLowerCase().split(" ");
         return getValidProductStream()
                 .filter(product -> Arrays.stream(words)
                         .anyMatch(word -> product.getDescription().toLowerCase().contains(word)))
@@ -76,7 +80,7 @@ public class ArrayListProductDao implements ProductDao {
     }
 
     @Override
-    public List<Product> findProducts(String query, String order, String field) {
+    public synchronized List<Product> findProducts(String query, String order, String field) {
         if (query == null) {
             return getSortedProducts(order, field);
         }
@@ -88,14 +92,14 @@ public class ArrayListProductDao implements ProductDao {
     }
 
     @Override
-    public void save(Product product) {
+    public synchronized void save(Product product) {
         if (product != null && products.stream().noneMatch(element -> element.getId().equals(product.getId()))) {
             products.add(product);
         }
     }
 
     @Override
-    public void delete(Long id) {
+    public synchronized void delete(Long id) {
         products.removeIf(product -> product.getId().equals(id));
     }
 }
