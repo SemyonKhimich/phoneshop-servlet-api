@@ -13,13 +13,12 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ProductListPageServletTest {
+public class ProductDetailsPageServletTest {
     @Mock
     private HttpServletRequest request;
     @Mock
@@ -28,29 +27,20 @@ public class ProductListPageServletTest {
     private RequestDispatcher requestDispatcher;
     @Mock
     private ProductDao productDao;
+
+    private String pathInfo = "/10";
+
     @Mock
-    private List<Product> products;
+    private Product product;
 
-    private ProductListPageServlet servlet = new ProductListPageServlet();
-
-    private String query = "query";
-    private String order = "order";
-    private String field = "field";
+    private ProductDetailsPageServlet servlet = new ProductDetailsPageServlet();
 
     @Before
     public void setup() {
         when(request.getRequestDispatcher(anyString())).thenReturn(requestDispatcher);
         servlet.setProductDao(productDao);
-        when(productDao.findProducts(query, order, field)).thenReturn(products);
-        when(request.getParameter(ProductListPageServlet.FIELD)).thenReturn(field);
-        when(request.getParameter(ProductListPageServlet.ORDER)).thenReturn(order);
-        when(request.getParameter(ProductListPageServlet.QUERY)).thenReturn(query);
-    }
-
-    @Test
-    public void testFindProducts() throws ServletException, IOException {
-        servlet.doGet(request, response);
-        verify(productDao).findProducts(query, order, field);
+        when(request.getPathInfo()).thenReturn(pathInfo);
+        when(productDao.getProduct(10L)).thenReturn(product);
     }
 
     @Test
@@ -60,8 +50,8 @@ public class ProductListPageServletTest {
     }
 
     @Test
-    public void testDoGetSetAttribute() throws ServletException, IOException {
+    public void testSetAttribute() throws ServletException, IOException {
         servlet.doGet(request, response);
-        verify(request).setAttribute("products", products);
+        verify(request).setAttribute("product", product);
     }
 }
