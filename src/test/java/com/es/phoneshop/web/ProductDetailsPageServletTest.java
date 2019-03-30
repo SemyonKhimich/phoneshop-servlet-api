@@ -1,5 +1,8 @@
 package com.es.phoneshop.web;
 
+import com.es.phoneshop.model.cart.Cart;
+import com.es.phoneshop.model.cart.HttpSessionCartService;
+import com.es.phoneshop.model.cart.OutOfStockException;
 import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.model.product.ProductDao;
 import org.junit.Before;
@@ -29,9 +32,16 @@ public class ProductDetailsPageServletTest {
     private ProductDao productDao;
 
     private String pathInfo = "/10";
+    private static final Long ID = 10L;
+    private static final Integer QUANTITY_INT = 1;
+    private static final String MESSAGE = "message";
 
     @Mock
     private Product product;
+    @Mock
+    private HttpSessionCartService httpSessionCartService;
+    @Mock
+    private Cart cart;
 
     private ProductDetailsPageServlet servlet = new ProductDetailsPageServlet();
 
@@ -40,7 +50,9 @@ public class ProductDetailsPageServletTest {
         when(request.getRequestDispatcher(anyString())).thenReturn(requestDispatcher);
         servlet.setProductDao(productDao);
         when(request.getPathInfo()).thenReturn(pathInfo);
-        when(productDao.getProduct(10L)).thenReturn(product);
+        when(productDao.getProduct(ID)).thenReturn(product);
+        HttpSessionCartService.setInstance(httpSessionCartService);
+        when(httpSessionCartService.getCart(request)).thenReturn(cart);
     }
 
     @Test
@@ -53,5 +65,34 @@ public class ProductDetailsPageServletTest {
     public void testSetAttribute() throws ServletException, IOException {
         servlet.doGet(request, response);
         verify(request).setAttribute("product", product);
+    }
+
+    @Test
+    public void testDoPostNumberFormatException() throws ServletException, IOException {
+        servlet.doPost(request, response);
+        verify(request).setAttribute(ProductDetailsPageServlet.ERROR, ProductDetailsPageServlet.NOT_A_POSITIVE_NUMBER);
+    }
+
+    @Test
+    public void testDoPostNumberFormatException2() throws ServletException, IOException {
+        when(request.getParameter(ProductDetailsPageServlet.QUANTITY)).thenReturn("-5");
+        servlet.doPost(request, response);
+        verify(request).setAttribute(ProductDetailsPageServlet.ERROR, ProductDetailsPageServlet.NOT_A_POSITIVE_NUMBER);
+    }
+
+    @Test
+    public void testDoPostOutOfStockException() throws ServletException, IOException, OutOfStockException {
+        when(request.getParameter(ProductDetailsPageServlet.QUANTITY)).thenReturn(QUANTITY_INT.toString());
+        doThrow(new OutOfStockException(MESSAGE)).when(httpSessionCartService).add(cart, ID, QUANTITY_INT);
+        servlet.doPost(request, response);
+        verify(request).setAttribute(ProductDetailsPageServlet.ERROR, MESSAGE);
+    }
+
+
+    @Test
+    public void testDoPostSendRedirect() throws ServletException, IOException {
+        when(request.getParameter(ProductDetailsPageServlet.QUANTITY)).thenReturn(QUANTITY_INT.toString());
+        servlet.doPost(request, response);
+        verify(response).sendRedirect(anyString());
     }
 }
