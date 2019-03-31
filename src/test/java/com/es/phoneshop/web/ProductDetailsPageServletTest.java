@@ -1,5 +1,7 @@
 package com.es.phoneshop.web;
 
+import com.es.phoneshop.model.recently.viewed.HttpSessionRecentlyViewedProductsService;
+import com.es.phoneshop.model.recently.viewed.RecentlyViewedProducts;
 import com.es.phoneshop.model.cart.Cart;
 import com.es.phoneshop.model.cart.HttpSessionCartService;
 import com.es.phoneshop.model.cart.OutOfStockException;
@@ -42,6 +44,10 @@ public class ProductDetailsPageServletTest {
     private HttpSessionCartService httpSessionCartService;
     @Mock
     private Cart cart;
+    @Mock
+    private HttpSessionRecentlyViewedProductsService recentlyViewedProductsService;
+    @Mock
+    private RecentlyViewedProducts recentlyViewedProducts;
 
     private ProductDetailsPageServlet servlet = new ProductDetailsPageServlet();
 
@@ -53,11 +59,14 @@ public class ProductDetailsPageServletTest {
         when(productDao.getProduct(ID)).thenReturn(product);
         HttpSessionCartService.setInstance(httpSessionCartService);
         when(httpSessionCartService.getCart(request)).thenReturn(cart);
+        HttpSessionRecentlyViewedProductsService.setInstance(recentlyViewedProductsService);
+        when(recentlyViewedProductsService.getRecentlyViewedProducts(request)).thenReturn(recentlyViewedProducts);
     }
 
     @Test
     public void testDoGet() throws ServletException, IOException {
         servlet.doGet(request, response);
+        verify(recentlyViewedProductsService).add(recentlyViewedProducts, ID);
         verify(requestDispatcher).forward(request, response);
     }
 

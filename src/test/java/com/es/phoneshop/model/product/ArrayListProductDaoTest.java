@@ -1,6 +1,7 @@
 package com.es.phoneshop.model.product;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.mockito.Mockito.*;
@@ -15,6 +16,11 @@ public class ArrayListProductDaoTest {
     private List<Product> products = new ArrayList<>();
 
     private ArrayListProductDao productDao = ArrayListProductDao.getInstance();
+
+    @BeforeClass
+    public static void before() {
+        ArrayListProductDao.restoreDefaults();
+    }
 
     @Before
     public void setup() {

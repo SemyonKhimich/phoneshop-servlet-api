@@ -16,6 +16,10 @@ public class ArrayListProductDao implements ProductDao {
         ArrayListProductDao.instance = instance;
     }
 
+    public static void restoreDefaults() {
+        instance = new ArrayListProductDao();
+    }
+
     public void setProducts(List<Product> products) {
         this.products = products;
     }
