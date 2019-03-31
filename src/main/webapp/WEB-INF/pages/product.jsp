@@ -45,22 +45,5 @@
         </p>
     </c:otherwise>
 </c:choose>
-<c:if test="${not empty recentlyViewedProducts}">
-<h1>Recently Viewed</h1>
-<jsp:useBean id="recentlyViewedProducts" type="com.es.phoneshop.model.recently.viewed.RecentlyViewedProducts" scope="session"/>
-<table>
-    <tr>
-        <c:forEach var="product" items="${recentlyViewedProducts.products}">
-            <td>
-                <a href="/phoneshop-servlet-api/products/${product.id}">
-                    <img class="product-tile" src="https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/${product.imageUrl}">
-                </a><br>
-                <a href="/phoneshop-servlet-api/products/${product.id}">
-                    ${product.description}
-                </a><br>
-                <fmt:formatNumber value="${product.price}" type="currency" currencySymbol="${product.currency.symbol}"/>
-            </td>
-        </c:forEach>
-    </tr>
-</table>
-</c:if>
+<tags:recentlyViewed recentlyViewedProducts="${recentlyViewedProducts}">
+</tags:recentlyViewed>

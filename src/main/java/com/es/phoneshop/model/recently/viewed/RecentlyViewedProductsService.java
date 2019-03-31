@@ -1,9 +1,12 @@
 package com.es.phoneshop.model.recently.viewed;
 
+import com.es.phoneshop.model.product.Product;
+
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 public interface RecentlyViewedProductsService {
-    void add(RecentlyViewedProducts products, Long id);
+    void add(List<Product> recentlyViewedProducts, Long id);
 
-    RecentlyViewedProducts getRecentlyViewedProducts(HttpServletRequest request);
+    List<Product> getRecentlyViewedProducts(HttpServletRequest request);
 }

@@ -1,10 +1,12 @@
 <%@ tag trimDirectiveWhitespaces="true" %>
-<%@ attribute name="recentlyViewedProducts" required="true" type="com.es.phoneshop.model.recently.viewed.RecentlyViewedProducts"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ attribute name="recentlyViewedProducts" required="true" type="java.util.List"%>
 <c:if test="${not empty recentlyViewedProducts}">
 <h1>Recently Viewed</h1>
 <table>
     <tr>
-        <c:forEach var="product" items="${recentlyViewedProducts.products}">
+        <c:forEach var="product" items="${recentlyViewedProducts}">
             <td>
                 <a href="/phoneshop-servlet-api/products/${product.id}">
                     <img class="product-tile" src="https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/${product.imageUrl}">

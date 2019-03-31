@@ -28,8 +28,7 @@ public class HttpSessionRecentlyViewedProductsServiceTest {
     private ArrayListProductDao productDao;
     @Mock
     private Product product;
-    @Mock
-    private RecentlyViewedProducts recentlyViewedProducts;
+
     @Mock
     private List<Product> productList;
 
@@ -41,21 +40,27 @@ public class HttpSessionRecentlyViewedProductsServiceTest {
         when(request.getSession()).thenReturn(session);
         ArrayListProductDao.setInstance(productDao);
         when(productDao.getProduct(ID)).thenReturn(product);
-        when(recentlyViewedProducts.getProducts()).thenReturn(productList);
-        when(productList.contains(product)).thenReturn(false);
     }
 
     @Test
     public void testGet() {
         recentlyViewedProductsService.getRecentlyViewedProducts(request);
-        verify(session).setAttribute(eq(HttpSessionRecentlyViewedProductsService.RECENTLY_VIEWED_PRODUCTS), any(RecentlyViewedProducts.class));
+        verify(session).setAttribute(eq(HttpSessionRecentlyViewedProductsService.RECENTLY_VIEWED_PRODUCTS), any(List.class));
     }
 
     @Test
     public void testAdd() {
+        when(productList.contains(product)).thenReturn(false);
         when(productList.size()).thenReturn(HttpSessionRecentlyViewedProductsService.NUMBER_OF_RECENTLY_VIEWED_PRODUCTS);
-        recentlyViewedProductsService.add(recentlyViewedProducts, ID);
+        recentlyViewedProductsService.add(productList, ID);
         verify(productList).remove(0);
+        verify(productList).add(product);
+    }
+    @Test
+    public  void testAddListContainsProduct(){
+        when(productList.contains(product)).thenReturn(true);
+        recentlyViewedProductsService.add(productList, ID);
+        verify(productList).remove(product);
         verify(productList).add(product);
     }
 }

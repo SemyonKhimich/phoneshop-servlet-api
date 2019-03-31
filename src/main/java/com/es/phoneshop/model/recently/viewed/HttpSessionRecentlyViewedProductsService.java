@@ -4,6 +4,8 @@ import com.es.phoneshop.model.product.ArrayListProductDao;
 import com.es.phoneshop.model.product.Product;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.LinkedList;
+import java.util.List;
 
 public class HttpSessionRecentlyViewedProductsService implements RecentlyViewedProductsService {
     static String RECENTLY_VIEWED_PRODUCTS = "recentlyViewedProducts";
@@ -20,21 +22,24 @@ public class HttpSessionRecentlyViewedProductsService implements RecentlyViewedP
     }
 
     @Override
-    public void add(RecentlyViewedProducts recentlyViewedProducts, Long id) {
+    public void add(List<Product> recentlyViewedProducts, Long id) {
         Product product = ArrayListProductDao.getInstance().getProduct(id);
-        if (!recentlyViewedProducts.getProducts().contains(product)) {
-            if (recentlyViewedProducts.getProducts().size() >= NUMBER_OF_RECENTLY_VIEWED_PRODUCTS) {
-                recentlyViewedProducts.getProducts().remove(0);
+        if (!recentlyViewedProducts.contains(product)) {
+            if (recentlyViewedProducts.size() >= NUMBER_OF_RECENTLY_VIEWED_PRODUCTS) {
+                recentlyViewedProducts.remove(0);
             }
-            recentlyViewedProducts.getProducts().add(product);
+            recentlyViewedProducts.add(product);
+        } else {
+            recentlyViewedProducts.remove(product);
+            recentlyViewedProducts.add(product);
         }
     }
 
     @Override
-    public RecentlyViewedProducts getRecentlyViewedProducts(HttpServletRequest request) {
-        RecentlyViewedProducts products = (RecentlyViewedProducts) request.getSession().getAttribute(RECENTLY_VIEWED_PRODUCTS);
+    public List<Product> getRecentlyViewedProducts(HttpServletRequest request) {
+        List<Product> products = (List<Product>) request.getSession().getAttribute(RECENTLY_VIEWED_PRODUCTS);
         if (products == null) {
-            products = new RecentlyViewedProducts();
+            products = new LinkedList<>();
             request.getSession().setAttribute(RECENTLY_VIEWED_PRODUCTS, products);
         }
         return products;

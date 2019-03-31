@@ -7,8 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 public class HttpSessionCartService implements CartService {
-    protected static final String CART = "cart";
-    protected static final String EXCEPTION_MESSAGE = "Not enough stock for product with id ";
+    static final String CART = "cart";
+    static final String EXCEPTION_MESSAGE = "Not enough stock for product with id ";
 
     private static HttpSessionCartService instance = new HttpSessionCartService();
 

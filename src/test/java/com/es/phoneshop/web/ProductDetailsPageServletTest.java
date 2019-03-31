@@ -1,7 +1,6 @@
 package com.es.phoneshop.web;
 
 import com.es.phoneshop.model.recently.viewed.HttpSessionRecentlyViewedProductsService;
-import com.es.phoneshop.model.recently.viewed.RecentlyViewedProducts;
 import com.es.phoneshop.model.cart.Cart;
 import com.es.phoneshop.model.cart.HttpSessionCartService;
 import com.es.phoneshop.model.cart.OutOfStockException;
@@ -18,6 +17,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -45,9 +45,9 @@ public class ProductDetailsPageServletTest {
     @Mock
     private Cart cart;
     @Mock
-    private HttpSessionRecentlyViewedProductsService recentlyViewedProductsService;
+    private List<Product> products;
     @Mock
-    private RecentlyViewedProducts recentlyViewedProducts;
+    private HttpSessionRecentlyViewedProductsService recentlyViewedProductsService;
 
     private ProductDetailsPageServlet servlet = new ProductDetailsPageServlet();
 
@@ -60,13 +60,13 @@ public class ProductDetailsPageServletTest {
         HttpSessionCartService.setInstance(httpSessionCartService);
         when(httpSessionCartService.getCart(request)).thenReturn(cart);
         HttpSessionRecentlyViewedProductsService.setInstance(recentlyViewedProductsService);
-        when(recentlyViewedProductsService.getRecentlyViewedProducts(request)).thenReturn(recentlyViewedProducts);
+        when(recentlyViewedProductsService.getRecentlyViewedProducts(request)).thenReturn(products);
     }
 
     @Test
     public void testDoGet() throws ServletException, IOException {
         servlet.doGet(request, response);
-        verify(recentlyViewedProductsService).add(recentlyViewedProducts, ID);
+        verify(recentlyViewedProductsService).add(products, ID);
         verify(requestDispatcher).forward(request, response);
     }
 
