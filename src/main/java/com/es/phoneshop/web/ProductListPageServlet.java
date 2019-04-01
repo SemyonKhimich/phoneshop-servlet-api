@@ -12,12 +12,12 @@ import java.io.IOException;
 
 public class ProductListPageServlet extends HttpServlet {
     private ProductDao productDao;
-    protected static final String QUERY = "query";
-    protected static final String ORDER = "order";
-    protected static final String FIELD = "field";
+    static final String QUERY = "query";
+    static final String ORDER = "order";
+    static final String FIELD = "field";
 
     @Override
-    public void init(ServletConfig config) throws ServletException {
+    public void init(ServletConfig config) {
         productDao = ArrayListProductDao.getInstance();
     }
 

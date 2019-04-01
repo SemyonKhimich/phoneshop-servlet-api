@@ -27,3 +27,23 @@
     </tr>
   </table>
 </tags:master>
+<p>
+    <form method="post">
+        <input name="quantity" value="${not empty param.quantity ? param.quantity : 1}" style="text-align: right">
+        <button>Add product</button>
+    </form>
+</p>
+<c:choose>
+    <c:when test="${not empty error}">
+        <p style="color: red">
+            ${error}
+        </p>
+    </c:when>
+    <c:otherwise>
+        <p style="color: green">
+            ${param.message}
+        </p>
+    </c:otherwise>
+</c:choose>
+<tags:recentlyViewed recentlyViewedProducts="${recentlyViewedProducts}">
+</tags:recentlyViewed>
