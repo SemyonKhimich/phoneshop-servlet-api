@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,15 +29,17 @@ public class HttpSessionCartServiceTest {
     @Mock
     private Product product;
 
-    private List<CartItem> cartItems = new ArrayList<>();
-    private HttpSessionCartService cartService = new HttpSessionCartService();
+    private List<CartItem> cartItems;
+    private HttpSessionCartService cartService = HttpSessionCartService.getInstance();
     private static final Long ID = 1L;
     private static final Integer STOCK = 10;
+    private static final String CART = "cart";
 
     @Before
     public void setup() {
+        cartItems = new ArrayList<>();
         when(request.getSession()).thenReturn(session);
-        ArrayListProductDao.setInstance(productDao);
+        cartService.setProductDao(productDao);
         when(productDao.getProduct(ID)).thenReturn(product);
         when(product.getId()).thenReturn(ID);
         when(product.getStock()).thenReturn(STOCK);
@@ -45,16 +48,21 @@ public class HttpSessionCartServiceTest {
     @Test
     public void testGetCartNewCart() {
         cartService.getCart(request);
-        verify(session).setAttribute(eq(HttpSessionCartService.CART), any(Cart.class));
+        verify(session).setAttribute(eq(CART), any(Cart.class));
     }
 
     @Test(expected = OutOfStockException.class)
-    public void testAddOutOfStockException() throws OutOfStockException {
+    public void testAddOutOfStockException() throws OutOfStockException, IncorrectValueException {
         cartService.add(cart, ID, STOCK + 1);
     }
 
+    @Test(expected = IncorrectValueException.class)
+    public void testAddIncorrectValueException() throws OutOfStockException, IncorrectValueException {
+        cartService.add(cart, ID, 0);
+    }
+
     @Test(expected = OutOfStockException.class)
-    public void testAddOutOfStockException2() throws OutOfStockException {
+    public void testAddOutOfStockException2() throws OutOfStockException, IncorrectValueException {
         Product productFromCartItem = mock(Product.class);
         CartItem cartItem = mock(CartItem.class);
         when(cartItem.getProduct()).thenReturn(productFromCartItem);
@@ -66,7 +74,7 @@ public class HttpSessionCartServiceTest {
     }
 
     @Test
-    public void testAddNewCartItem() throws OutOfStockException {
+    public void testAddNewCartItem() throws OutOfStockException, IncorrectValueException {
         List<CartItem> mockCartItems = mock(List.class);
         when(cart.getCartItems()).thenReturn(mockCartItems);
         cartService.add(cart, ID, STOCK);
@@ -74,7 +82,7 @@ public class HttpSessionCartServiceTest {
     }
 
     @Test
-    public void testAddModifyCartItem() throws OutOfStockException {
+    public void testAddModifyCartItem() throws OutOfStockException, IncorrectValueException {
         Product productFromCartItem = mock(Product.class);
         CartItem cartItem = mock(CartItem.class);
         when(cartItem.getProduct()).thenReturn(productFromCartItem);
@@ -84,5 +92,45 @@ public class HttpSessionCartServiceTest {
         when(cart.getCartItems()).thenReturn(cartItems);
         cartService.add(cart, ID, STOCK / 2);
         verify(cartItem).setQuantity(STOCK);
+    }
+
+    @Test
+    public void testDelete() {
+        Product productFromCartItem = mock(Product.class);
+        CartItem cartItem = mock(CartItem.class);
+        when(cartItem.getProduct()).thenReturn(productFromCartItem);
+        when(productFromCartItem.getId()).thenReturn(ID);
+        cartItems.add(cartItem);
+        when(cart.getCartItems()).thenReturn(cartItems);
+        cartService.delete(cart, ID);
+        assertTrue(cartItems.isEmpty());
+    }
+
+    @Test(expected = IncorrectValueException.class)
+    public void testUpdateIncorrectValueException() throws OutOfStockException, IncorrectValueException {
+        cartService.update(cart, ID, -1);
+    }
+
+    @Test(expected = OutOfStockException.class)
+    public void testUpdateOutOfStockException() throws OutOfStockException, IncorrectValueException {
+        Product productFromCartItem = mock(Product.class);
+        CartItem cartItem = mock(CartItem.class);
+        when(cartItem.getProduct()).thenReturn(productFromCartItem);
+        when(productFromCartItem.getId()).thenReturn(ID);
+        cartItems.add(cartItem);
+        when(cart.getCartItems()).thenReturn(cartItems);
+        cartService.update(cart, ID, STOCK + 1);
+    }
+
+    @Test
+    public void testUpdatedSuccessfully() throws OutOfStockException, IncorrectValueException {
+        Product productFromCartItem = mock(Product.class);
+        CartItem cartItem = mock(CartItem.class);
+        when(cartItem.getProduct()).thenReturn(productFromCartItem);
+        when(productFromCartItem.getId()).thenReturn(ID);
+        cartItems.add(cartItem);
+        when(cart.getCartItems()).thenReturn(cartItems);
+        cartService.update(cart, ID, STOCK - 1);
+        verify(cartItem).setQuantity(STOCK - 1);
     }
 }

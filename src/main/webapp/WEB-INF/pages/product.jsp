@@ -26,7 +26,6 @@
         <td>${product.stock}</td>
     </tr>
   </table>
-</tags:master>
 <p>
     <form method="post">
         <input name="quantity" value="${not empty param.quantity ? param.quantity : 1}" style="text-align: right">
@@ -45,5 +44,6 @@
         </p>
     </c:otherwise>
 </c:choose>
-<tags:recentlyViewed recentlyViewedProducts="${recentlyViewedProducts}">
-</tags:recentlyViewed>
+<jsp:include page="/cart/minicart"/>
+<tags:recentlyViewed recentlyViewedProducts="${recentlyViewedProducts}"/>
+</tags:master>

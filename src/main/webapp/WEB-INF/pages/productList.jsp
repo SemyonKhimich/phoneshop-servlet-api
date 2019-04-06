@@ -41,6 +41,6 @@
       </tr>
     </c:forEach>
   </table>
+  <jsp:include page="/cart/minicart"/>
+  <tags:recentlyViewed recentlyViewedProducts="${recentlyViewedProducts}"/>
 </tags:master>
-<tags:recentlyViewed recentlyViewedProducts="${recentlyViewedProducts}">
-</tags:recentlyViewed>

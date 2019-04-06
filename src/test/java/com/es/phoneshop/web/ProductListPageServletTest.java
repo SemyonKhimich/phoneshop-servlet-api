@@ -33,24 +33,24 @@ public class ProductListPageServletTest {
 
     private ProductListPageServlet servlet = new ProductListPageServlet();
 
-    private String query = "query";
-    private String order = "order";
-    private String field = "field";
+    private static final String QUERY = "query";
+    private static final String ORDER = "order";
+    private static final String FIELD = "field";
 
     @Before
     public void setup() {
         when(request.getRequestDispatcher(anyString())).thenReturn(requestDispatcher);
         servlet.setProductDao(productDao);
-        when(productDao.findProducts(query, order, field)).thenReturn(products);
-        when(request.getParameter(ProductListPageServlet.FIELD)).thenReturn(field);
-        when(request.getParameter(ProductListPageServlet.ORDER)).thenReturn(order);
-        when(request.getParameter(ProductListPageServlet.QUERY)).thenReturn(query);
+        when(productDao.findProducts(QUERY, ORDER, FIELD)).thenReturn(products);
+        when(request.getParameter(FIELD)).thenReturn(FIELD);
+        when(request.getParameter(ORDER)).thenReturn(ORDER);
+        when(request.getParameter(QUERY)).thenReturn(QUERY);
     }
 
     @Test
     public void testFindProducts() throws ServletException, IOException {
         servlet.doGet(request, response);
-        verify(productDao).findProducts(query, order, field);
+        verify(productDao).findProducts(QUERY, ORDER, FIELD);
     }
 
     @Test

@@ -12,9 +12,9 @@ import java.io.IOException;
 
 public class ProductListPageServlet extends HttpServlet {
     private ProductDao productDao;
-    static final String QUERY = "query";
-    static final String ORDER = "order";
-    static final String FIELD = "field";
+    private static final String QUERY = "query";
+    private static final String ORDER = "order";
+    private static final String FIELD = "field";
 
     @Override
     public void init(ServletConfig config) {
@@ -30,7 +30,7 @@ public class ProductListPageServlet extends HttpServlet {
         request.getRequestDispatcher("/WEB-INF/pages/productList.jsp").forward(request, response);
     }
 
-    public void setProductDao(ProductDao productDao) {
+    void setProductDao(ProductDao productDao) {
         this.productDao = productDao;
     }
 
