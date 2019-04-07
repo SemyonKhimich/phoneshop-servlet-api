@@ -41,7 +41,6 @@ public class HttpSessionCartServiceTest {
         when(request.getSession()).thenReturn(session);
         cartService.setProductDao(productDao);
         when(productDao.getProduct(ID)).thenReturn(product);
-        when(product.getId()).thenReturn(ID);
         when(product.getStock()).thenReturn(STOCK);
     }
 
@@ -88,6 +87,7 @@ public class HttpSessionCartServiceTest {
         when(cartItem.getProduct()).thenReturn(productFromCartItem);
         when(cartItem.getQuantity()).thenReturn(STOCK / 2);
         when(productFromCartItem.getId()).thenReturn(ID);
+        when(productFromCartItem.getStock()).thenReturn(STOCK);
         cartItems.add(cartItem);
         when(cart.getCartItems()).thenReturn(cartItems);
         cartService.add(cart, ID, STOCK / 2);
@@ -128,6 +128,7 @@ public class HttpSessionCartServiceTest {
         CartItem cartItem = mock(CartItem.class);
         when(cartItem.getProduct()).thenReturn(productFromCartItem);
         when(productFromCartItem.getId()).thenReturn(ID);
+        when(productFromCartItem.getStock()).thenReturn(STOCK);
         cartItems.add(cartItem);
         when(cart.getCartItems()).thenReturn(cartItems);
         cartService.update(cart, ID, STOCK - 1);

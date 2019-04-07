@@ -38,20 +38,17 @@ public class HttpSessionCartService implements CartService {
         if (quantity <= 0) {
             throw new IncorrectValueException(INCORRECT_VALUE_EXCEPTION_MESSAGE);
         }
-        Product product = productDao.getProduct(productId);
-        Optional<CartItem> optionalCartItem = cart.getCartItems()
-                .stream()
-                .filter(cartItem -> productId.equals(cartItem.getProduct().getId()))
-                .findAny();
+        Optional<CartItem> optionalCartItem = getOptionalCartItem(cart, productId);
         if (optionalCartItem.isPresent()) {
             CartItem cartItem = optionalCartItem.get();
-            if (cartItem.getQuantity() + quantity > product.getStock()) {
-                throw new OutOfStockException(OUT_OF_STOCK_EXCEPTION_MESSAGE + product.getId());
+            if (cartItem.getQuantity() + quantity > cartItem.getProduct().getStock()) {
+                throw new OutOfStockException(OUT_OF_STOCK_EXCEPTION_MESSAGE + productId);
             }
             cartItem.setQuantity(cartItem.getQuantity() + quantity);
         } else {
+            Product product = productDao.getProduct(productId);
             if (quantity > product.getStock()) {
-                throw new OutOfStockException(OUT_OF_STOCK_EXCEPTION_MESSAGE + product.getId());
+                throw new OutOfStockException(OUT_OF_STOCK_EXCEPTION_MESSAGE + productId);
             }
             CartItem cartItem = new CartItem(product, quantity);
             cart.getCartItems().add(cartItem);
@@ -63,15 +60,11 @@ public class HttpSessionCartService implements CartService {
         if (quantity <= 0) {
             throw new IncorrectValueException(INCORRECT_VALUE_EXCEPTION_MESSAGE);
         }
-        Product product = productDao.getProduct(productId);
-        Optional<CartItem> optionalCartItem = cart.getCartItems()
-                .stream()
-                .filter(cartItem -> productId.equals(cartItem.getProduct().getId()))
-                .findAny();
+        Optional<CartItem> optionalCartItem = getOptionalCartItem(cart, productId);
         if (optionalCartItem.isPresent()) {
             CartItem cartItem = optionalCartItem.get();
-            if (quantity > product.getStock()) {
-                throw new OutOfStockException(OUT_OF_STOCK_EXCEPTION_MESSAGE + product.getId());
+            if (quantity > cartItem.getProduct().getStock()) {
+                throw new OutOfStockException(OUT_OF_STOCK_EXCEPTION_MESSAGE + productId);
             }
             cartItem.setQuantity(quantity);
         }
@@ -84,5 +77,12 @@ public class HttpSessionCartService implements CartService {
 
     void setProductDao(ProductDao productDao) {
         this.productDao = productDao;
+    }
+
+    private Optional<CartItem> getOptionalCartItem(Cart cart, Long productId) {
+        return cart.getCartItems()
+                .stream()
+                .filter(cartItem -> productId.equals(cartItem.getProduct().getId()))
+                .findAny();
     }
 }
