@@ -1,11 +1,9 @@
 package com.es.phoneshop.web;
 
-import com.es.phoneshop.model.recently.viewed.HttpSessionRecentlyViewedProductsService;
-import com.es.phoneshop.model.cart.Cart;
-import com.es.phoneshop.model.cart.HttpSessionCartService;
-import com.es.phoneshop.model.cart.OutOfStockException;
+import com.es.phoneshop.model.cart.*;
 import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.model.product.ProductDao;
+import com.es.phoneshop.model.recently.viewed.RecentlyViewedProductsService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,21 +31,24 @@ public class ProductDetailsPageServletTest {
     @Mock
     private ProductDao productDao;
 
-    private String pathInfo = "/10";
+    private static final String pathInfo = "/10";
     private static final Long ID = 10L;
     private static final Integer QUANTITY_INT = 1;
     private static final String MESSAGE = "message";
+    private static final String ERROR = "error";
+    private static final String NOT_A_NUMBER = "not a number";
+    private static final String QUANTITY = "quantity";
 
     @Mock
     private Product product;
     @Mock
-    private HttpSessionCartService httpSessionCartService;
+    private CartService cartService;
     @Mock
     private Cart cart;
     @Mock
     private List<Product> products;
     @Mock
-    private HttpSessionRecentlyViewedProductsService recentlyViewedProductsService;
+    private RecentlyViewedProductsService recentlyViewedProductsService;
 
     private ProductDetailsPageServlet servlet = new ProductDetailsPageServlet();
 
@@ -57,9 +58,9 @@ public class ProductDetailsPageServletTest {
         servlet.setProductDao(productDao);
         when(request.getPathInfo()).thenReturn(pathInfo);
         when(productDao.getProduct(ID)).thenReturn(product);
-        HttpSessionCartService.setInstance(httpSessionCartService);
-        when(httpSessionCartService.getCart(request)).thenReturn(cart);
-        HttpSessionRecentlyViewedProductsService.setInstance(recentlyViewedProductsService);
+        servlet.setCartService(cartService);
+        when(cartService.getCart(request)).thenReturn(cart);
+        servlet.setRecentlyViewedProductsService(recentlyViewedProductsService);
         when(recentlyViewedProductsService.getRecentlyViewedProducts(request)).thenReturn(products);
     }
 
@@ -79,28 +80,29 @@ public class ProductDetailsPageServletTest {
     @Test
     public void testDoPostNumberFormatException() throws ServletException, IOException {
         servlet.doPost(request, response);
-        verify(request).setAttribute(ProductDetailsPageServlet.ERROR, ProductDetailsPageServlet.NOT_A_POSITIVE_NUMBER);
+        verify(request).setAttribute(ERROR, NOT_A_NUMBER);
     }
 
     @Test
-    public void testDoPostNumberFormatException2() throws ServletException, IOException {
-        when(request.getParameter(ProductDetailsPageServlet.QUANTITY)).thenReturn("-5");
+    public void testDoPostOutOfStockException() throws ServletException, IOException, OutOfStockException, IncorrectValueException {
+        when(request.getParameter(QUANTITY)).thenReturn(QUANTITY_INT.toString());
+        doThrow(new OutOfStockException(MESSAGE)).when(cartService).add(cart, ID, QUANTITY_INT);
         servlet.doPost(request, response);
-        verify(request).setAttribute(ProductDetailsPageServlet.ERROR, ProductDetailsPageServlet.NOT_A_POSITIVE_NUMBER);
+        verify(request).setAttribute(ERROR, MESSAGE);
     }
 
     @Test
-    public void testDoPostOutOfStockException() throws ServletException, IOException, OutOfStockException {
-        when(request.getParameter(ProductDetailsPageServlet.QUANTITY)).thenReturn(QUANTITY_INT.toString());
-        doThrow(new OutOfStockException(MESSAGE)).when(httpSessionCartService).add(cart, ID, QUANTITY_INT);
+    public void testDoPostIncorrectValueException() throws ServletException, IOException, IncorrectValueException, OutOfStockException, IncorrectValueException {
+        when(request.getParameter(QUANTITY)).thenReturn("0");
+        doThrow(new IncorrectValueException(MESSAGE)).when(cartService).add(cart, ID, 0);
         servlet.doPost(request, response);
-        verify(request).setAttribute(ProductDetailsPageServlet.ERROR, MESSAGE);
+        verify(request).setAttribute(ERROR, MESSAGE);
     }
 
 
     @Test
     public void testDoPostSendRedirect() throws ServletException, IOException {
-        when(request.getParameter(ProductDetailsPageServlet.QUANTITY)).thenReturn(QUANTITY_INT.toString());
+        when(request.getParameter(QUANTITY)).thenReturn(QUANTITY_INT.toString());
         servlet.doPost(request, response);
         verify(response).sendRedirect(anyString());
     }
