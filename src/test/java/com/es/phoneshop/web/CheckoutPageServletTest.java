@@ -85,6 +85,7 @@ public class CheckoutPageServletTest {
     @Test
     public void testDoPostEmptyParameter() throws ServletException, IOException {
         when(request.getParameter(anyString())).thenReturn("");
+        when(request.getParameter("deliveryMode")).thenReturn(DeliveryMode.COURIER.toString());
         servlet.doPost(request, response);
         verify(request, times(4)).setAttribute(anyString(), anyString());
         verify(request).setAttribute("cart", cart);

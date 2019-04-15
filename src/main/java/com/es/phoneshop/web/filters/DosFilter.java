@@ -1,7 +1,7 @@
 package com.es.phoneshop.web.filters;
 
-import com.es.phoneshop.model.DosService;
-import com.es.phoneshop.model.DosServiceImpl;
+import com.es.phoneshop.model.dos.DosService;
+import com.es.phoneshop.model.dos.DosServiceImpl;
 
 import javax.servlet.*;
 import java.io.IOException;

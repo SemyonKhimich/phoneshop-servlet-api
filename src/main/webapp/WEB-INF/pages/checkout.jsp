@@ -47,7 +47,7 @@
             ${emptyCartError}
         </p>
     </c:if>
-    <form method="post">
+    <form method="post" action="${pageContext.servletContext.contextPath}/checkout">
         <p>
             <label>
                 First name:
@@ -87,7 +87,7 @@
         <p>
             <label>
             Delivery Mode:
-            <select name="deliveryMode">
+            <select name="deliveryMode" onchange="document.getElementById('update').click()">
                 <c:forEach var="mode" items="${deliveryModes}">
                     <c:choose>
                         <c:when test="${mode == param.deliveryMode}">
@@ -100,6 +100,10 @@
                 </c:forEach>
             </select>
             </label>
+            <button id="update" style="display: none" formmethod="get"></button>
+        </p>
+        <p>
+            Delivery cost: <fmt:formatNumber value="${deliveryMode.cost}" type="currency" currencySymbol="${deliveryMode.currency.symbol}"/>
         </p>
         <p>
             <label>
@@ -117,6 +121,9 @@
                 </c:forEach>
             </select>
             </label>
+        </p>
+        <p>
+            Total order price: <fmt:formatNumber value="${cart.totalProductsPrice + deliveryMode.cost}" type="currency" currencySymbol="${deliveryMode.currency.symbol}"/>
         </p>
         <p>
             <button>Place order</button>

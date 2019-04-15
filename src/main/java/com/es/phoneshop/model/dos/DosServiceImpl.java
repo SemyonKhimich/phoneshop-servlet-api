@@ -1,4 +1,4 @@
-package com.es.phoneshop.model;
+package com.es.phoneshop.model.dos;
 
 import java.util.Date;
 import java.util.Map;

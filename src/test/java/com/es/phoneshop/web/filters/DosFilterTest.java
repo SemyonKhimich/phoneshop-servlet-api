@@ -1,6 +1,6 @@
 package com.es.phoneshop.web.filters;
 
-import com.es.phoneshop.model.DosService;
+import com.es.phoneshop.model.dos.DosService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

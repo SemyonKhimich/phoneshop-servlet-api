@@ -1,4 +1,4 @@
-package com.es.phoneshop.model;
+package com.es.phoneshop.model.dos;
 
 import org.junit.Before;
 import org.junit.Test;

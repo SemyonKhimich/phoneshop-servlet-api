@@ -61,6 +61,12 @@ public class CheckoutPageServlet extends HttpServlet {
     private void renderCheckoutPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Cart cart = cartService.getCart(request);
         request.setAttribute("cart", cart);
+        String deliveryModeString = request.getParameter("deliveryMode");
+        if (deliveryModeString == null) {
+            deliveryModeString = DeliveryMode.values()[0].toString();
+        }
+        DeliveryMode deliveryMode = DeliveryMode.valueOf(deliveryModeString);
+        request.setAttribute("deliveryMode", deliveryMode);
         request.setAttribute("deliveryModes", orderService.getDeliveryModes());
         request.setAttribute("paymentMethods", orderService.getPaymentMethods());
         request.getRequestDispatcher("/WEB-INF/pages/checkout.jsp").forward(request, response);
