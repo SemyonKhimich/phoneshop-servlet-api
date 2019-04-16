@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
@@ -57,6 +58,7 @@ public class CheckoutPageServletTest {
         when(orderService.getPaymentMethods()).thenReturn(Arrays.asList(PaymentMethod.values()));
         when(request.getParameter(anyString())).thenReturn(parameter);
         when(orderService.createOrder(cart)).thenReturn(order);
+        when(orderService.getTotalOrderPrice(eq(cart), any(DeliveryMode.class))).thenReturn(BigDecimal.ONE);
         when(cart.getCartItems()).thenReturn(cartItems);
         when(request.getParameter("deliveryMode")).thenReturn(DeliveryMode.COURIER.toString());
         when(request.getParameter("paymentMethod")).thenReturn(PaymentMethod.MONEY.toString());

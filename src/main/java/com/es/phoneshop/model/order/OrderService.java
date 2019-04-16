@@ -2,6 +2,7 @@ package com.es.phoneshop.model.order;
 
 import com.es.phoneshop.model.cart.Cart;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface OrderService {
@@ -14,4 +15,6 @@ public interface OrderService {
     List<PaymentMethod> getPaymentMethods();
 
     void calculateTotalOrderPrice(Order order);
+
+    BigDecimal getTotalOrderPrice(Cart cart, DeliveryMode deliveryMode);
 }

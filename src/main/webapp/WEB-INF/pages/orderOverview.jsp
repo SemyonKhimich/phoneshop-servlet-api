@@ -33,7 +33,7 @@
             </c:forEach>
             <tr>
                 <td colspan="2" style="text-align: right">
-                    Total
+                    Total products price
                 </td>
                 ${order.totalProductsPrice}
                 <td class="price">
@@ -64,8 +64,8 @@
         <p>
             Payment method: ${order.paymentMethod}
         </p>
-        <p>
+        <h2>
             Total order price: <fmt:formatNumber value="${order.totalOrderPrice}" type="currency" currencySymbol="${order.deliveryMode.currency.symbol}"/>
-        </p>
+        </h2>
 <tags:recentlyViewed recentlyViewedProducts="${recentlyViewedProducts}"/>
 </tags:master>

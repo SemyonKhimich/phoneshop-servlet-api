@@ -27,17 +27,21 @@ public class OrderServiceImplTest {
 
     private List<CartItem> cartItems = new ArrayList<>();
 
+    private DeliveryMode deliveryMode = DeliveryMode.COURIER;
+
+    private BigDecimal bigDecimal = BigDecimal.ONE;
+
     @Before
     public void setup() {
         orderService.setOrderDao(orderDao);
         when(cart.getCartItems()).thenReturn(cartItems);
-        when(cart.getTotalProductsPrice()).thenReturn(BigDecimal.ONE);
+        when(cart.getTotalProductsPrice()).thenReturn(bigDecimal);
     }
 
     @Test
     public void testCreateOrder() {
         Order order = orderService.createOrder(cart);
-        assertEquals(order.getTotalProductsPrice(), BigDecimal.ONE);
+        assertEquals(order.getTotalProductsPrice(), bigDecimal);
         assertEquals(order.getCartItems(), cartItems);
     }
 
@@ -49,9 +53,15 @@ public class OrderServiceImplTest {
 
     @Test
     public void testCalculateTotalOrderPrice() {
-        when(order.getDeliveryMode()).thenReturn(DeliveryMode.COURIER);
-        when(order.getTotalProductsPrice()).thenReturn(BigDecimal.ONE);
+        when(order.getDeliveryMode()).thenReturn(deliveryMode);
+        when(order.getTotalProductsPrice()).thenReturn(bigDecimal);
         orderService.calculateTotalOrderPrice(order);
         verify(order).setTotalOrderPrice(new BigDecimal(11));
+    }
+
+    @Test
+    public void testGetTotalOrderPrice() {
+        BigDecimal totalOrderPrice = orderService.getTotalOrderPrice(cart, deliveryMode);
+        assertEquals(totalOrderPrice, deliveryMode.getCost().add(bigDecimal));
     }
 }

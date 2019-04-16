@@ -33,7 +33,7 @@
             </c:forEach>
             <tr>
                 <td colspan="2" style="text-align: right">
-                    Total
+                    Total products price
                 </td>
                 <td class="price">
                     <fmt:formatNumber value="${cart.totalProductsPrice}" type="currency" currencySymbol="${not empty cart.cartItems ? cart.cartItems.get(0).product.currency.symbol : $}"/>
@@ -122,9 +122,9 @@
             </select>
             </label>
         </p>
-        <p>
-            Total order price: <fmt:formatNumber value="${cart.totalProductsPrice + deliveryMode.cost}" type="currency" currencySymbol="${deliveryMode.currency.symbol}"/>
-        </p>
+        <h2>
+            Total order price: <fmt:formatNumber value="${totalOrderPrice}" type="currency" currencySymbol="${deliveryMode.currency.symbol}"/>
+        </h2>
         <p>
             <button>Place order</button>
         </p>

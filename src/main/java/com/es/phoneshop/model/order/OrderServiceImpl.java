@@ -49,6 +49,11 @@ public class OrderServiceImpl implements OrderService {
         order.setTotalOrderPrice(total);
     }
 
+    @Override
+    public BigDecimal getTotalOrderPrice(Cart cart, DeliveryMode deliveryMode) {
+        return cart.getTotalProductsPrice().add(deliveryMode.getCost());
+    }
+
     void setOrderDao(OrderDao orderDao) {
         this.orderDao = orderDao;
     }

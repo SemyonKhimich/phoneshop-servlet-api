@@ -54,7 +54,7 @@
         </c:forEach>
         <tr>
             <td colspan="2" style="text-align: right">
-                Total
+                Total products price
             </td>
             <td class="price">
                 <c:if test="${empty errors}">

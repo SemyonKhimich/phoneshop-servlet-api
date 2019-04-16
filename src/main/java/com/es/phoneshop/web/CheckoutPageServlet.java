@@ -66,6 +66,7 @@ public class CheckoutPageServlet extends HttpServlet {
             deliveryModeString = DeliveryMode.values()[0].toString();
         }
         DeliveryMode deliveryMode = DeliveryMode.valueOf(deliveryModeString);
+        request.setAttribute("totalOrderPrice", orderService.getTotalOrderPrice(cart, deliveryMode));
         request.setAttribute("deliveryMode", deliveryMode);
         request.setAttribute("deliveryModes", orderService.getDeliveryModes());
         request.setAttribute("paymentMethods", orderService.getPaymentMethods());
