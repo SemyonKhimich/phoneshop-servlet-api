@@ -6,6 +6,7 @@ import com.es.phoneshop.model.recently.viewed.HttpSessionRecentlyViewedProductsS
 import com.es.phoneshop.model.product.ArrayListProductDao;
 import com.es.phoneshop.model.product.ProductDao;
 import com.es.phoneshop.model.recently.viewed.RecentlyViewedProductsService;
+import com.es.phoneshop.model.review.*;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -19,6 +20,8 @@ public class ProductDetailsPageServlet extends HttpServlet {
     private ProductDao productDao;
     private CartService cartService;
     private RecentlyViewedProductsService recentlyViewedProductsService;
+    private ProductReviewDao productReviewDao;
+    private ProductReviewService productReviewService;
     private static final String ERROR = "error";
     private static final String NOT_A_NUMBER = "not a number";
     private static final String QUANTITY = "quantity";
@@ -29,6 +32,8 @@ public class ProductDetailsPageServlet extends HttpServlet {
         productDao = ArrayListProductDao.getInstance();
         cartService = HttpSessionCartService.getInstance();
         recentlyViewedProductsService = HttpSessionRecentlyViewedProductsService.getInstance();
+        productReviewDao = ArrayListProductReviewDao.getInstance();
+        productReviewService = ProductReviewServiceImpl.getInstance();
     }
 
     @Override
@@ -37,7 +42,16 @@ public class ProductDetailsPageServlet extends HttpServlet {
         Long id = Long.parseLong(pathInfo.substring(1));
         List<Product> products = recentlyViewedProductsService.getRecentlyViewedProducts(request);
         recentlyViewedProductsService.add(products, id);
-        request.setAttribute("product", productDao.getProduct(id));
+        Product product = productDao.getProduct(id);
+        request.setAttribute("product", product);
+        ProductReview productReview;
+        try {
+            productReview = productReviewDao.getProductReview(id);
+        } catch (ProductReviewNotFoundException exc) {
+            productReview = productReviewService.createProductReview(product);
+            productReviewDao.save(productReview);
+        }
+        request.setAttribute("productReview", productReview);
         request.getRequestDispatcher("/WEB-INF/pages/product.jsp").forward(request, response);
     }
 
