@@ -44,6 +44,47 @@
         </p>
     </c:otherwise>
 </c:choose>
+<h1>
+    Add review
+</h1>
+<p>${param.result}</p>
+<p>
+    <form method="post" action="${pageContext.servletContext.contextPath}/addReview/${product.id}">
+        <p>
+            userName: <input name="userName" required>
+        </p>
+        <p>
+            Rating: <input name="rating" required>
+        </p>
+        <p>
+            Statement: <input name="statement" required>
+        </p>
+        <button>Add review</button>
+    </form>
+</p>
+<jsp:useBean id="productReview" type="com.es.phoneshop.model.review.ProductReview" scope="request"/>
+<table>
+    <thead>
+            <tr>
+              <td>User Name</td>
+              <td>Rating</td>
+              <td>Statement</td>
+            </tr>
+        </thead>
+        <c:forEach var="review" items="${productReview.reviews}">
+              <tr>
+                <td>
+                  ${review.userName}
+                </td>
+                <td>
+                  ${review.rating}
+                </td>
+                <td>
+                  ${review.statement}
+                </td>
+              </tr>
+        </c:forEach>
+</table>
 <jsp:include page="/cart/minicart"/>
 <tags:recentlyViewed recentlyViewedProducts="${recentlyViewedProducts}"/>
 </tags:master>

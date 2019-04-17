@@ -62,6 +62,22 @@
         <servlet-name>OrderOverview</servlet-name>
         <url-pattern>/orderOverview/*</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>AddReview</servlet-name>
+        <servlet-class>com.es.phoneshop.web.AddReviewServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AddReview</servlet-name>
+        <url-pattern>/addReview/*</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>ModeratorPage</servlet-name>
+        <servlet-class>com.es.phoneshop.web.ModeratorPageServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ModeratorPage</servlet-name>
+        <url-pattern>/moderator</url-pattern>
+    </servlet-mapping>
     <filter>
         <filter-name>Dos</filter-name>
         <filter-class>com.es.phoneshop.web.filters.DosFilter</filter-class>
