@@ -52,10 +52,29 @@
                 </td>
             </tr>
         </c:forEach>
+        <tr>
+            <td colspan="2" style="text-align: right">
+                Total products price
+            </td>
+            <td class="price">
+                <c:if test="${empty errors}">
+                    <fmt:formatNumber value="${cart.totalProductsPrice}" type="currency" currencySymbol="${not empty cart.cartItems ? cart.cartItems.get(0).product.currency.symbol : $}"/>
+                </c:if>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+        </tr>
     </table>
     <p>
         <button>Update</button>
     </p>
 </form>
+    <p>
+        <a href="${pageContext.servletContext.contextPath}/checkout">
+            <button>Checkout</button>
+        </a>
+    </p>
 <tags:recentlyViewed recentlyViewedProducts="${recentlyViewedProducts}"/>
 </tags:master>

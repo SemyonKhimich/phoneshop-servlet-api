@@ -5,6 +5,7 @@ import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.model.product.ProductDao;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.util.Optional;
 
 public class HttpSessionCartService implements CartService {
@@ -30,6 +31,7 @@ public class HttpSessionCartService implements CartService {
             cart = new Cart();
             request.getSession().setAttribute(CART, cart);
         }
+        calculateTotalProductsPrice(cart);
         return cart;
     }
 
@@ -53,6 +55,7 @@ public class HttpSessionCartService implements CartService {
             CartItem cartItem = new CartItem(product, quantity);
             cart.getCartItems().add(cartItem);
         }
+        calculateTotalProductsPrice(cart);
     }
 
     @Override
@@ -67,12 +70,14 @@ public class HttpSessionCartService implements CartService {
                 throw new OutOfStockException(OUT_OF_STOCK_EXCEPTION_MESSAGE + productId);
             }
             cartItem.setQuantity(quantity);
+            calculateTotalProductsPrice(cart);
         }
     }
 
     @Override
     public void delete(Cart cart, Long productId) {
         cart.getCartItems().removeIf(cartItem -> cartItem.getProduct().getId().equals(productId));
+        calculateTotalProductsPrice(cart);
     }
 
     void setProductDao(ProductDao productDao) {
@@ -84,5 +89,19 @@ public class HttpSessionCartService implements CartService {
                 .stream()
                 .filter(cartItem -> productId.equals(cartItem.getProduct().getId()))
                 .findAny();
+    }
+
+    @Override
+    public void calculateTotalProductsPrice(Cart cart) {
+        BigDecimal totalPrice = cart.getCartItems().stream()
+                .map(cartItem -> cartItem.getProduct().getPrice().multiply(BigDecimal.valueOf(cartItem.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        cart.setTotalProductsPrice(totalPrice);
+    }
+
+    @Override
+    public void clearCart(HttpServletRequest request) {
+        Cart cart = new Cart();
+        request.getSession().setAttribute(CART, cart);
     }
 }

@@ -13,6 +13,7 @@ import static org.mockito.Mockito.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -86,6 +87,7 @@ public class HttpSessionCartServiceTest {
         CartItem cartItem = mock(CartItem.class);
         when(cartItem.getProduct()).thenReturn(productFromCartItem);
         when(cartItem.getQuantity()).thenReturn(STOCK / 2);
+        when(productFromCartItem.getPrice()).thenReturn(BigDecimal.ONE);
         when(productFromCartItem.getId()).thenReturn(ID);
         when(productFromCartItem.getStock()).thenReturn(STOCK);
         cartItems.add(cartItem);
@@ -127,11 +129,17 @@ public class HttpSessionCartServiceTest {
         Product productFromCartItem = mock(Product.class);
         CartItem cartItem = mock(CartItem.class);
         when(cartItem.getProduct()).thenReturn(productFromCartItem);
+        when(productFromCartItem.getPrice()).thenReturn(BigDecimal.ONE);
         when(productFromCartItem.getId()).thenReturn(ID);
         when(productFromCartItem.getStock()).thenReturn(STOCK);
         cartItems.add(cartItem);
         when(cart.getCartItems()).thenReturn(cartItems);
         cartService.update(cart, ID, STOCK - 1);
         verify(cartItem).setQuantity(STOCK - 1);
+    }
+    @Test
+    public void testClearCart(){
+        cartService.clearCart(request);
+        verify(session).setAttribute(eq(CART), any(Cart.class));
     }
 }
